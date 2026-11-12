@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Landing — OpenShift GitOps</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="brand-bar">
+    <p class="brand">RHDH Demo</p>
+    <p class="brand-meta">Helm · GitOps · OpenShift</p>
+  </header>
+  <main class="hero">
+    <p class="eyebrow">Software Template</p>
+    <h1>Ship a polished app<br />in one click</h1>
+    <p class="lede">
+      Scaffolded by Red Hat Developer Hub, published to GitLab, and synced
+      by OpenShift GitOps — no CI pipeline required for this demo.
+    </p>
+    <div class="cta-row">
+      <a class="cta primary" href="#stack">See the stack</a>
+      <a class="cta ghost" href="#flow">How it works</a>
+    </div>
+  </main>
+  <section id="stack" class="panel">
+    <h2>What you just deployed</h2>
+    <p>
+      A static landing page served by nginx, packaged as a Helm chart, and
+      delivered through an Argo CD Application created by the scaffolder.
+    </p>
+    <ul class="stack-list">
+      <li>Red Hat Developer Hub Software Template</li>
+      <li>GitLab repository (self-hosted)</li>
+      <li>Helm chart on OpenShift</li>
+      <li>OpenShift GitOps (Argo CD)</li>
+    </ul>
+  </section>
+  <section id="flow" class="panel alt">
+    <h2>Demo flow</h2>
+    <ol class="flow-list">
+      <li>Launch the template in Developer Hub</li>
+      <li>Repo appears on your demo GitLab</li>
+      <li>Argo CD syncs the Helm chart</li>
+      <li>Topology and Argo tabs light up in the catalog</li>
+    </ol>
+  </section>
+  <footer>
+    <p>Ready for your next demo cluster — change the GitLab host and go.</p>
+  </footer>
+  <script>
+    document.documentElement.style.setProperty(
+      "--tilt",
+      (window.scrollY / 800).toFixed(3)
+    );
+    window.addEventListener(
+      "scroll",
+      () => {
+        document.documentElement.style.setProperty(
+          "--tilt",
+          (window.scrollY / 800).toFixed(3)
+        );
+      },
+      { passive: true }
+    );
+  </script>
+</body>
+</html>

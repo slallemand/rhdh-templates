@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: rhdh-demo-templates
+  description: Software Templates de démonstration RHDH
+spec:
+  type: url
+  targets:
+    - ./templates/demo-landing/template.yaml

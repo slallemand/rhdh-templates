@@ -1,0 +1,21 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  title: ${{ values.name }}
+  description: ${{ values.description }}
+  annotations:
+    argocd/app-name: ${{ values.name }}
+    argocd/instance-name: ${{ values.argoInstance }}
+    backstage.io/kubernetes-id: ${{ values.name }}
+    backstage.io/kubernetes-namespace: ${{ values.namespace }}
+    gitlab.com/project-slug: ${{ values.gitlabGroup }}/${{ values.name }}
+  tags:
+    - demo
+    - helm
+    - gitops
+    - openshift
+spec:
+  type: website
+  lifecycle: experimental
+  owner: ${{ values.owner }}

@@ -1,0 +1,30 @@
+name: ${{ values.name }}
+namespace: ${{ values.namespace }}
+
+replicaCount: 1
+
+image:
+  repository: nginxinc/nginx-unprivileged
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 8080
+
+route:
+  enabled: true
+  host: ""
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+backstage:
+  kubernetesId: ${{ values.name }}

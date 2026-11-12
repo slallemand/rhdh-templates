@@ -1,0 +1,135 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: demo-landing
+  title: Deploy Demo Landing (Helm + GitOps)
+  description: >
+    Create a GitLab repository with a visual landing-page Helm chart and deploy
+    it to OpenShift via OpenShift GitOps (Argo CD). No CI build required.
+  tags:
+    - recommended
+    - demo
+    - helm
+    - gitops
+    - gitlab
+    - openshift
+spec:
+  owner: rhdh-demos
+  type: website
+
+  parameters:
+    - title: Application
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Application name
+          type: string
+          description: Used for the GitLab repo, Argo CD app, and catalog entity
+          default: demo-landing
+          pattern: ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          default: Visual demo landing page deployed with Helm and OpenShift GitOps
+        owner:
+          title: Owner
+          type: string
+          description: Catalog owner (user: or group: entity ref)
+          default: user:guest
+
+    - title: GitLab (self-hosted)
+      required:
+        - gitlabHost
+        - gitlabGroup
+      properties:
+        gitlabHost:
+          title: GitLab host
+          type: string
+          description: Hostname of the demo GitLab (no https://)
+          default: gitlab.apps.example.demo
+        gitlabGroup:
+          title: GitLab group
+          type: string
+          description: Group or namespace that will own the new repository
+          default: demos
+        repoVisibility:
+          title: Repository visibility
+          type: string
+          default: private
+          enum:
+            - private
+            - internal
+            - public
+
+    - title: OpenShift GitOps
+      required:
+        - namespace
+        - argoInstance
+      properties:
+        namespace:
+          title: Target namespace
+          type: string
+          description: OpenShift namespace where the app will be synced
+          default: demo-landing
+        argoInstance:
+          title: Argo CD instance name
+          type: string
+          description: Must match an Argo CD instance configured in RHDH
+          default: default
+
+  steps:
+    - id: fetch
+      name: Render Helm chart and catalog metadata
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutRender:
+          - chart/templates/*
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          gitlabHost: ${{ parameters.gitlabHost }}
+          gitlabGroup: ${{ parameters.gitlabGroup }}
+          namespace: ${{ parameters.namespace }}
+          argoInstance: ${{ parameters.argoInstance }}
+
+    - id: publish
+      name: Publish repository to GitLab
+      action: publish:gitlab
+      input:
+        allowedHosts:
+          - ${{ parameters.gitlabHost }}
+        description: ${{ parameters.description }}
+        repoUrl: ${{ parameters.gitlabHost }}?owner=${{ parameters.gitlabGroup }}&repo=${{ parameters.name }}
+        defaultBranch: main
+        repoVisibility: ${{ parameters.repoVisibility }}
+
+    - id: register
+      name: Register component in the catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+    - id: argocd
+      name: Create Argo CD Application
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.name }}
+        argoInstance: ${{ parameters.argoInstance }}
+        namespace: ${{ parameters.namespace }}
+        repoUrl: ${{ steps.publish.output.remoteUrl }}
+        path: chart
+        labelValue: ${{ parameters.name }}
+
+  output:
+    links:
+      - title: Open the GitLab repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open the catalog component
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

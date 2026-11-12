@@ -1,0 +1,237 @@
+:root {
+  --ink: #0f1419;
+  --paper: #f4f0e8;
+  --ember: #c41e3a;
+  --ember-deep: #8b1428;
+  --fog: rgba(244, 240, 232, 0.72);
+  --line: rgba(244, 240, 232, 0.18);
+  --tilt: 0;
+  font-synthesis: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--paper);
+  background: var(--ink);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(196, 30, 58, 0.35), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 10%, rgba(40, 90, 140, 0.28), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 60% 90%, rgba(196, 30, 58, 0.12), transparent 45%),
+    linear-gradient(165deg, #0a0d11 0%, #151b22 45%, #0f1419 100%);
+  transform: translateY(calc(var(--tilt) * -24px));
+  transition: transform 80ms linear;
+}
+
+.atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cpath d='M0 80h160M80 0v160' stroke='%23f4f0e8' stroke-opacity='0.04' stroke-width='1'/%3E%3C/svg%3E");
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.brand-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.75rem clamp(1.25rem, 4vw, 3.5rem) 0;
+  animation: rise 700ms ease-out both;
+}
+
+.brand {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fog);
+}
+
+.hero {
+  padding: clamp(3rem, 12vh, 7rem) clamp(1.25rem, 4vw, 3.5rem) 4rem;
+  max-width: 52rem;
+  animation: rise 900ms 80ms ease-out both;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.hero h1 {
+  margin: 0 0 1.25rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 7vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  margin: 0 0 2rem;
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  color: var(--fog);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.85rem 1.35rem;
+  border: 1px solid var(--line);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.cta.primary {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
+}
+
+.cta.primary:hover {
+  background: var(--ember-deep);
+  border-color: var(--ember-deep);
+  transform: translateY(-2px);
+}
+
+.cta.ghost {
+  color: var(--paper);
+  background: transparent;
+}
+
+.cta.ghost:hover {
+  border-color: var(--paper);
+  transform: translateY(-2px);
+}
+
+.panel {
+  padding: 3.5rem clamp(1.25rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--line);
+  animation: rise 700ms 160ms ease-out both;
+}
+
+.panel.alt {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.panel h2 {
+  margin: 0 0 1rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  letter-spacing: -0.02em;
+}
+
+.panel p {
+  margin: 0 0 1.5rem;
+  max-width: 40rem;
+  color: var(--fog);
+}
+
+.stack-list,
+.flow-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+  max-width: 36rem;
+}
+
+.stack-list li,
+.flow-list li {
+  padding: 0.9rem 1rem;
+  border-left: 3px solid var(--ember);
+  background: rgba(15, 20, 25, 0.45);
+}
+
+.flow-list {
+  counter-reset: step;
+}
+
+.flow-list li {
+  counter-increment: step;
+  padding-left: 3rem;
+  position: relative;
+}
+
+.flow-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  color: var(--ember);
+}
+
+footer {
+  padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem) 3.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--fog);
+  font-size: 0.95rem;
+}
+
+footer p {
+  margin: 0;
+  max-width: 36rem;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

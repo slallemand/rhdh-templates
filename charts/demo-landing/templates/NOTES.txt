@@ -1,0 +1,7 @@
+Demo landing "{{ include "demo-landing.name" . }}" installed.
+
+1. Check the deployment:
+   oc get deployment,svc,route -l app.kubernetes.io/name={{ include "demo-landing.name" . }}
+
+2. Open the Route URL:
+   oc get route {{ include "demo-landing.name" . }} -o jsonpath='{.spec.host}'
