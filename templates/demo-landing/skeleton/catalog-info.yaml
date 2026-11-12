@@ -4,9 +4,14 @@ metadata:
   name: ${{ values.name | dump }}
   description: ${{ values.description | dump }}
   annotations:
+    # CD (Argo) — same as TSSC / laposte-api
     argocd/app-selector: tssc/gitops=${{ values.name }}
     backstage.io/kubernetes-id: ${{ values.name }}
     backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
+    # Disable GitLab CI tab: AnnotateScmSlug/GitlabFiller auto-adds project-slug
+    # from the GitLab location; empty values turn the GitLab CI views off.
+    gitlab.com/project-slug: ""
+    gitlab.com/instance: ""
   tags:
     - demo
     - helm

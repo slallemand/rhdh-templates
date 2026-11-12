@@ -78,11 +78,13 @@ The generated `catalog-info.yaml` enables:
 - **CD** tab (Argo CD): `argocd/app-selector: tssc/gitops=<name>` (same as laposte-api)
 - **Topology / Kubernetes**: `backstage.io/kubernetes-id`
 - **Source link**: `backstage.io/source-location`
-- **Entity type**: `service` (RHDH entity pages for `website` often omit the CD tab)
+- **Entity type**: `service`
 
-CI is intentionally **not** enabled: no `janus-idp.io/tekton` and no `gitlab.com/project-slug`.
+CI is suppressed on purpose:
+- no `janus-idp.io/tekton`
+- `gitlab.com/project-slug: ""` and `gitlab.com/instance: ""` so the GitLab filler/SCM slug processor cannot enable the GitLab pipelines CI tab
 
-Argo Applications are labeled `tssc/gitops: <name>` so the CD selector matches.
+Argo Applications are labeled `tssc/gitops: <name>` so the CD selector matches. Do not set `argocd/instance-name: default` unless that name exists in the RHDH Argo config (laposte-api omits it).
 
 ### Runtime prerequisites
 
