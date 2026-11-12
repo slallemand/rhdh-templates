@@ -54,12 +54,15 @@ The scaffolder action only creates `${name}-app-of-apps`. That app syncs `app-of
 
 | Parameter | Default | Notes |
 |-----------|---------|-------|
-| `name` | `demo-landing` | Repo, Argo app, entity name, **and OpenShift namespace** |
+| `name` | `demo-landing` | Repo, Argo app, and entity name |
 | `repoOwner` | `demos` | GitLab group that will own the repo |
 | `repoVisibility` | `public` | GitLab project visibility |
+| `namespace` | `tssc-app` | Destination namespace (must be managed by Argo CD) |
 | `argoInstance` | `default` | Must match RHDH Argo CD config |
 | `argoNS` | `tssc-gitops` | Namespace for Argo Application CRs |
 | `argoProject` | `default` | Argo CD project |
+
+On OpenShift GitOps, the Argo CD instance in `tssc-gitops` can only sync into namespaces labeled `argocd.argoproj.io/managed-by=tssc-gitops`. That is why the default destination is `tssc-app` (same as TSSC workshop templates), not a fresh namespace named after the app.
 
 The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-apps-domain}` from `provisioning-data`.
 

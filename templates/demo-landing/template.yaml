@@ -57,10 +57,18 @@ spec:
 
     - title: OpenShift GitOps
       required:
+        - namespace
         - argoInstance
         - argoNS
         - argoProject
       properties:
+        namespace:
+          title: Target namespace
+          type: string
+          description: >
+            OpenShift namespace already managed by the Argo CD instance
+            (must have label argocd.argoproj.io/managed-by equal to Argo CD namespace)
+          default: tssc-app
         argoInstance:
           title: Argo CD instance name
           type: string
@@ -95,7 +103,7 @@ spec:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
           owner: user:default/${{ user.entity.metadata.name }}
-          namespace: ${{ parameters.name }}
+          namespace: ${{ parameters.namespace }}
           argoInstance: ${{ parameters.argoInstance }}
           argoNS: ${{ parameters.argoNS }}
           argoProject: ${{ parameters.argoProject }}
