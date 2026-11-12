@@ -57,16 +57,10 @@ spec:
 
     - title: OpenShift GitOps
       required:
-        - namespace
         - argoInstance
         - argoNS
         - argoProject
       properties:
-        namespace:
-          title: Target namespace
-          type: string
-          description: OpenShift namespace where the app will be synced
-          default: demo-landing
         argoInstance:
           title: Argo CD instance name
           type: string
@@ -101,7 +95,7 @@ spec:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
           owner: user:default/${{ user.entity.metadata.name }}
-          namespace: ${{ parameters.namespace }}
+          namespace: ${{ parameters.name }}
           argoInstance: ${{ parameters.argoInstance }}
           argoNS: ${{ parameters.argoNS }}
           argoProject: ${{ parameters.argoProject }}

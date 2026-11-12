@@ -54,10 +54,9 @@ The scaffolder action only creates `${name}-app-of-apps`. That app syncs `app-of
 
 | Parameter | Default | Notes |
 |-----------|---------|-------|
-| `name` | `demo-landing` | Repo, Argo app, and entity name |
+| `name` | `demo-landing` | Repo, Argo app, entity name, **and OpenShift namespace** |
 | `repoOwner` | `demos` | GitLab group that will own the repo |
 | `repoVisibility` | `public` | GitLab project visibility |
-| `namespace` | `demo-landing` | OpenShift target namespace |
 | `argoInstance` | `default` | Must match RHDH Argo CD config |
 | `argoNS` | `tssc-gitops` | Namespace for Argo Application CRs |
 | `argoProject` | `default` | Argo CD project |
