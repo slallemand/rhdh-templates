@@ -65,10 +65,12 @@ spec:
         namespace:
           title: Target namespace
           type: string
-          description: >
-            OpenShift namespace already managed by the Argo CD instance
-            (must have label argocd.argoproj.io/managed-by equal to Argo CD namespace)
-          default: tssc-app
+          description: OpenShift namespace managed by the Argo CD instance
+          default: tssc-app-development
+          enum:
+            - tssc-app-development
+            - tssc-app-stage
+            - tssc-app-prod
         argoInstance:
           title: Argo CD instance name
           type: string
