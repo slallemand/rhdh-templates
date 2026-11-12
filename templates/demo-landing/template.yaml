@@ -15,7 +15,7 @@ metadata:
     - openshift
 spec:
   owner: user:guest
-  type: website
+  type: service
 
   parameters:
     - title: Provide Information for Application

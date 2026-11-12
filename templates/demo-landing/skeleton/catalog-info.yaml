@@ -1,26 +1,18 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{ values.name }}
-  title: ${{ values.name }}
-  description: ${{ values.description }}
+  name: ${{ values.name | dump }}
+  description: ${{ values.description | dump }}
   annotations:
-    # CD — same selector as TSSC workshop apps (e.g. laposte-api)
     argocd/app-selector: tssc/gitops=${{ values.name }}
-    argocd/instance-name: ${{ values.argoInstance }}
-    argocd/app-namespace: ${{ values.argoNS }}
-    # Topology
     backstage.io/kubernetes-id: ${{ values.name }}
-    # Source (no gitlab.com/project-slug / janus-idp.io/tekton → no CI tab)
     backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
-  labels:
-    tssc/gitops: ${{ values.name }}
   tags:
     - demo
     - helm
     - gitops
     - openshift
 spec:
-  type: website
-  lifecycle: experimental
-  owner: ${{ values.owner }}
+  type: service
+  lifecycle: production
+  owner: ${{ values.owner | dump }}
