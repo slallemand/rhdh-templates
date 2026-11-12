@@ -101,12 +101,11 @@ spec:
       name: Publish repository to GitLab
       action: publish:gitlab
       input:
-        allowedHosts:
-          - ${{ parameters.gitlabHost }}
-        description: ${{ parameters.description }}
         repoUrl: ${{ parameters.gitlabHost }}?owner=${{ parameters.gitlabGroup }}&repo=${{ parameters.name }}
         defaultBranch: main
         repoVisibility: ${{ parameters.repoVisibility }}
+        settings:
+          description: ${{ parameters.description }}
 
     - id: register
       name: Register component in the catalog
