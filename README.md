@@ -94,6 +94,10 @@ Argo Applications are labeled `tssc/gitops: <name>` so the CD selector matches. 
 - Argo CD / OpenShift GitOps configured in RHDH (`argoInstance` must exist)
 - Managed namespaces `tssc-app-development`, `tssc-app-stage`, and `tssc-app-prod` available to the `tssc-gitops` Argo CD instance
 
+#### RHDH 1.10 Argo CD UI (CD tab)
+
+After migrating from 1.9 → 1.10, enable the Argo CD frontend mountPoints and a real instance (not `instances: []`). See [`rhdh/dynamic-plugins-argocd.yaml`](rhdh/dynamic-plugins-argocd.yaml) (`bs_1.49.4` overlays).
+
 ### Local chart check
 
 ```bash
