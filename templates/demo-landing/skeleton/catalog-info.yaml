@@ -9,7 +9,8 @@ metadata:
     argocd/instance-name: ${{ values.argoInstance }}
     backstage.io/kubernetes-id: ${{ values.name }}
     backstage.io/kubernetes-namespace: ${{ values.namespace }}
-    gitlab.com/project-slug: ${{ values.gitlabGroup }}/${{ values.name }}
+    backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
+    gitlab.com/project-slug: ${{ values.destination }}
   tags:
     - demo
     - helm

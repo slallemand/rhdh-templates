@@ -32,10 +32,11 @@ When you add a new template under `templates/<name>/template.yaml`, also append 
 
 **Flow**
 
-1. Renders a Helm chart + `catalog-info.yaml`
-2. Creates a repository on a **self-hosted GitLab** (host is a template parameter)
-3. Registers the component in the RHDH catalog
-4. Creates an Argo CD Application via `argocd:create-resources`
+1. Fetches `component:default/provisioning-data` to resolve the demo cluster domain
+2. Renders a Helm chart + `catalog-info.yaml`
+3. Creates a repository on the self-hosted GitLab (`gitlab-gitlab.<ocp-apps-domain>`)
+4. Registers the component in the RHDH catalog
+5. Creates an Argo CD Application via `argocd:create-resources`
 
 There is **no CI build**: the chart serves static HTML from a ConfigMap using `nginxinc/nginx-unprivileged`.
 
@@ -44,10 +45,12 @@ There is **no CI build**: the chart serves static HTML from a ConfigMap using `n
 | Parameter | Default | Notes |
 |-----------|---------|-------|
 | `name` | `demo-landing` | Repo, Argo app, and entity name |
-| `gitlabHost` | `gitlab.apps.example.demo` | Replace with your demo GitLab hostname |
-| `gitlabGroup` | `demos` | Group that will own the repo |
+| `repoOwner` | `demos` | GitLab group that will own the repo |
+| `repoVisibility` | `public` | GitLab project visibility |
 | `namespace` | `demo-landing` | OpenShift target namespace |
 | `argoInstance` | `default` | Must match RHDH Argo CD config |
+
+The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-apps-domain}` from `provisioning-data`.
 
 ### Catalog annotations
 
@@ -55,13 +58,15 @@ The generated `catalog-info.yaml` enables:
 
 - **Argo CD** tab: `argocd/app-name`, `argocd/instance-name`
 - **Topology / Kubernetes** tabs: `backstage.io/kubernetes-id`, `backstage.io/kubernetes-namespace`
+- **Source link**: `backstage.io/source-location`, `gitlab.com/project-slug`
 
 Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`) are set on the Helm workloads.
 
 ### Runtime prerequisites
 
+- Catalog entity **`component:default/provisioning-data`** with label `ocp-apps-domain` (same pattern as TSSC workshop templates)
 - RHDH with dynamic plugins: GitLab scaffolder, Argo CD (frontend + `argocd:create-resources`), Kubernetes, Topology
-- GitLab integration (token with permission to create projects in the target group)
+- GitLab integration for host `gitlab-gitlab.<ocp-apps-domain>` (token with permission to create projects in the target group)
 - Argo CD / OpenShift GitOps configured in RHDH (`argoInstance` must exist)
 - Target OpenShift namespace available (or allow Argo CD to create it)
 

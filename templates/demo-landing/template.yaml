@@ -18,47 +18,38 @@ spec:
   type: website
 
   parameters:
-    - title: Application
+    - title: Provide Information for Application
       required:
         - name
-        - owner
       properties:
         name:
-          title: Application name
+          title: Name
           type: string
-          description: Used for the GitLab repo, Argo CD app, and catalog entity
+          description: Unique name of the component
           default: demo-landing
+          ui:field: EntityNamePicker
+          maxLength: 63
           pattern: ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$
           ui:autofocus: true
         description:
           title: Description
           type: string
+          description: Help others understand what this website is for
           default: Visual demo landing page deployed with Helm and OpenShift GitOps
-        owner:
-          title: Owner
-          type: string
-          description: Catalog owner entity reference (user or group)
-          default: "user:guest"
 
-    - title: GitLab (self-hosted)
+    - title: Application repository Information
       required:
-        - gitlabHost
-        - gitlabGroup
+        - repoOwner
       properties:
-        gitlabHost:
-          title: GitLab host
+        repoOwner:
+          title: Repo Owner
           type: string
-          description: Hostname of the demo GitLab without scheme
-          default: gitlab.apps.example.demo
-        gitlabGroup:
-          title: GitLab group
-          type: string
-          description: Group or namespace that will own the new repository
+          description: Your SCM host organization/group
           default: demos
         repoVisibility:
           title: Repository visibility
           type: string
-          default: private
+          default: public
           enum:
             - private
             - internal
@@ -81,6 +72,12 @@ spec:
           default: default
 
   steps:
+    - id: fetch-provision-data
+      name: Fetch Provision Data
+      action: catalog:fetch
+      input:
+        entityRef: component:default/provisioning-data
+
     - id: fetch
       name: Render Helm chart and catalog metadata
       action: fetch:template
@@ -91,21 +88,21 @@ spec:
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
-          owner: ${{ parameters.owner }}
-          gitlabHost: ${{ parameters.gitlabHost }}
-          gitlabGroup: ${{ parameters.gitlabGroup }}
+          owner: user:default/${{ user.entity.metadata.name }}
           namespace: ${{ parameters.namespace }}
           argoInstance: ${{ parameters.argoInstance }}
+          cluster: ${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}
+          gitlabHost: gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}
+          destination: ${{ parameters.repoOwner }}/${{ parameters.name }}
+          gitlabGroup: ${{ parameters.repoOwner }}
 
     - id: publish
       name: Publish repository to GitLab
       action: publish:gitlab
       input:
-        repoUrl: ${{ parameters.gitlabHost }}?owner=${{ parameters.gitlabGroup }}&repo=${{ parameters.name }}
+        repoUrl: 'gitlab-gitlab.${{ steps["fetch-provision-data"].output.entity.metadata.labels["ocp-apps-domain"] }}?owner=${{ parameters.repoOwner }}&repo=${{ parameters.name }}'
         defaultBranch: main
         repoVisibility: ${{ parameters.repoVisibility }}
-        settings:
-          description: ${{ parameters.description }}
 
     - id: register
       name: Register component in the catalog
@@ -121,7 +118,7 @@ spec:
         appName: ${{ parameters.name }}
         argoInstance: ${{ parameters.argoInstance }}
         namespace: ${{ parameters.namespace }}
-        repoUrl: ${{ steps.publish.output.remoteUrl }}
+        repoUrl: https://gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}/${{ parameters.repoOwner }}/${{ parameters.name }}.git
         path: chart
         labelValue: ${{ parameters.name }}
 
