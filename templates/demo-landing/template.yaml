@@ -37,7 +37,7 @@ spec:
         owner:
           title: Owner
           type: string
-          description: Catalog owner (user: or group: entity ref)
+          description: "Catalog owner (user: or group: entity ref)"
           default: user:guest
 
     - title: GitLab (self-hosted)
@@ -48,7 +48,7 @@ spec:
         gitlabHost:
           title: GitLab host
           type: string
-          description: Hostname of the demo GitLab (no https://)
+          description: "Hostname of the demo GitLab (no https://)"
           default: gitlab.apps.example.demo
         gitlabGroup:
           title: GitLab group
