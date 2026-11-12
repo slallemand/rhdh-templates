@@ -45,24 +45,29 @@ There is **no CI build**: the chart serves static HTML from a ConfigMap using `n
 | Path | Role |
 |------|------|
 | `chart/` | Helm chart deployed to OpenShift |
-| `app-of-apps/` | Argo CD `Application` YAML (visible GitOps) |
+| `app-of-apps/` | Three Argo CD Applications (development, stage, prod) |
 | `catalog-info.yaml` | RHDH catalog entity |
 
-The scaffolder action only creates `${name}-app-of-apps`. That app syncs `app-of-apps/`, which in turn creates the Helm `Application` that deploys `chart/`.
+The scaffolder action only creates `${name}-app-of-apps`. That app syncs `app-of-apps/`, which creates three Helm Applications:
+
+| Argo Application | Destination namespace |
+|------------------|----------------------|
+| `${name}-development` | `tssc-app-development` |
+| `${name}-stage` | `tssc-app-stage` |
+| `${name}-prod` | `tssc-app-prod` |
+
+There is no environment picker in the template form: all three environments are always created.
 
 ### Default parameters
 
 | Parameter | Default | Notes |
 |-----------|---------|-------|
-| `name` | `demo-landing` | Repo, Argo app, and entity name |
-| `repoOwner` | `demos` | GitLab group that will own the repo |
+| `name` | `demo-landing` | Repo, Argo apps prefix, and entity name |
+| `repoOwner` | `development` | GitLab group that will own the repo |
 | `repoVisibility` | `public` | GitLab project visibility |
-| `namespace` | `tssc-app-development` | One of `tssc-app-development`, `tssc-app-stage`, `tssc-app-prod` |
 | `argoInstance` | `default` | Must match RHDH Argo CD config |
 | `argoNS` | `tssc-gitops` | Namespace for Argo Application CRs |
 | `argoProject` | `default` | Argo CD project |
-
-On this workshop cluster, OpenShift GitOps (`tssc-gitops`) only manages `tssc-app-development`, `tssc-app-stage`, and `tssc-app-prod`. The template defaults to development.
 
 The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-apps-domain}` from `provisioning-data`.
 
@@ -70,8 +75,8 @@ The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-a
 
 The generated `catalog-info.yaml` enables:
 
-- **Argo CD** tab: `argocd/app-name` (child Helm Application), `argocd/instance-name`
-- **Topology / Kubernetes** tabs: `backstage.io/kubernetes-id`, `backstage.io/kubernetes-namespace`
+- **Argo CD** tab: `argocd/app-selector: demo/gitops=<name>` (all three env Applications), `argocd/instance-name`
+- **Topology / Kubernetes** tabs: `backstage.io/kubernetes-id`
 - **Source link**: `backstage.io/source-location`, `gitlab.com/project-slug`
 
 Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`) are set on the Helm workloads and GitOps manifests.
@@ -82,7 +87,7 @@ Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`
 - RHDH with dynamic plugins: GitLab scaffolder, Argo CD (frontend + `argocd:create-resources`), Kubernetes, Topology
 - GitLab integration for host `gitlab-gitlab.<ocp-apps-domain>` (token with permission to create projects in the target group)
 - Argo CD / OpenShift GitOps configured in RHDH (`argoInstance` must exist)
-- Target OpenShift namespace available (or allow Argo CD to create it via `CreateNamespace=true`)
+- Managed namespaces `tssc-app-development`, `tssc-app-stage`, and `tssc-app-prod` available to the `tssc-gitops` Argo CD instance
 
 ### Local chart check
 

@@ -1,5 +1,4 @@
 name: ${{ values.name }}
-namespace: ${{ values.namespace }}
 
 replicaCount: 1
 

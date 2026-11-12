@@ -5,10 +5,9 @@ metadata:
   title: ${{ values.name }}
   description: ${{ values.description }}
   annotations:
-    argocd/app-name: ${{ values.name }}
+    argocd/app-selector: demo/gitops=${{ values.name }}
     argocd/instance-name: ${{ values.argoInstance }}
     backstage.io/kubernetes-id: ${{ values.name }}
-    backstage.io/kubernetes-namespace: ${{ values.namespace }}
     backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
     gitlab.com/project-slug: ${{ values.destination }}
   labels:

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ${{ values.name }}
+  name: ${{ values.name }}-prod
   namespace: ${{ values.argoNS }}
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -15,9 +15,15 @@ spec:
     repoURL: ${{ values.repoURL }}.git
     path: chart
     targetRevision: ${{ values.defaultBranch }}
+    helm:
+      valuesObject:
+        name: ${{ values.name }}
+        namespace: tssc-app-prod
+        backstage:
+          kubernetesId: ${{ values.name }}
   destination:
     server: https://kubernetes.default.svc
-    namespace: ${{ values.namespace }}
+    namespace: tssc-app-prod
   syncPolicy:
     managedNamespaceMetadata:
       labels:
@@ -27,7 +33,7 @@ spec:
       selfHeal: true
       allowEmpty: true
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=false
       - PruneLast=true
       - ApplyOutOfSyncOnly=true
     retry:

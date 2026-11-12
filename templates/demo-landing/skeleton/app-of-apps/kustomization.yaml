@@ -3,7 +3,8 @@ kind: Kustomization
 commonLabels:
   demo/gitops: ${{ values.name }}
   backstage.io/kubernetes-id: ${{ values.name }}
-  backstage.io/kubernetes-namespace: ${{ values.namespace }}
   app.kubernetes.io/part-of: ${{ values.name }}
 resources:
-  - application.yaml
+  - application-development.yaml
+  - application-stage.yaml
+  - application-prod.yaml

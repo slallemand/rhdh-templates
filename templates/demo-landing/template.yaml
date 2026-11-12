@@ -45,7 +45,7 @@ spec:
           title: Repo Owner
           type: string
           description: Your SCM host organization/group
-          default: demos
+          default: development
         repoVisibility:
           title: Repository visibility
           type: string
@@ -57,20 +57,10 @@ spec:
 
     - title: OpenShift GitOps
       required:
-        - namespace
         - argoInstance
         - argoNS
         - argoProject
       properties:
-        namespace:
-          title: Target namespace
-          type: string
-          description: OpenShift namespace managed by the Argo CD instance
-          default: tssc-app-development
-          enum:
-            - tssc-app-development
-            - tssc-app-stage
-            - tssc-app-prod
         argoInstance:
           title: Argo CD instance name
           type: string
@@ -105,7 +95,6 @@ spec:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
           owner: user:default/${{ user.entity.metadata.name }}
-          namespace: ${{ parameters.namespace }}
           argoInstance: ${{ parameters.argoInstance }}
           argoNS: ${{ parameters.argoNS }}
           argoProject: ${{ parameters.argoProject }}
