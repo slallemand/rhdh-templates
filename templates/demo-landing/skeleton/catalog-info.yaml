@@ -5,11 +5,14 @@ metadata:
   title: ${{ values.name }}
   description: ${{ values.description }}
   annotations:
+    # CD (Argo CD) — enables the CD tab; do not add janus-idp.io/tekton (CI)
     argocd/app-selector: demo/gitops=${{ values.name }}
     argocd/instance-name: ${{ values.argoInstance }}
+    argocd/app-namespace: ${{ values.argoNS }}
+    # Topology / Kubernetes
     backstage.io/kubernetes-id: ${{ values.name }}
+    # Source link only (no gitlab.com/project-slug — that enables the GitLab CI tab)
     backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
-    gitlab.com/project-slug: ${{ values.destination }}
   labels:
     demo/gitops: ${{ values.name }}
   tags:
