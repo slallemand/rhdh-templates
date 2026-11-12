@@ -65,11 +65,8 @@ There is no environment picker in the template form: all three environments are 
 | `name` | `demo-landing` | Repo, Argo apps prefix, and entity name |
 | `repoOwner` | `development` | GitLab group that will own the repo |
 | `repoVisibility` | `public` | GitLab project visibility |
-| `argoInstance` | `default` | Must match RHDH Argo CD config |
-| `argoNS` | `tssc-gitops` | Namespace for Argo Application CRs |
-| `argoProject` | `default` | Argo CD project |
 
-The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-apps-domain}` from `provisioning-data`.
+GitOps values are **fixed** in the template (no form fields): `argoInstance=default`, `argoNS=tssc-gitops`, `argoProject=default`. The GitLab host is derived as `gitlab-gitlab.${ocp-apps-domain}` from `provisioning-data`.
 
 ### Catalog annotations
 

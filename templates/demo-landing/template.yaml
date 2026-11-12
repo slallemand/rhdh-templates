@@ -55,28 +55,6 @@ spec:
             - internal
             - public
 
-    - title: OpenShift GitOps
-      required:
-        - argoInstance
-        - argoNS
-        - argoProject
-      properties:
-        argoInstance:
-          title: Argo CD instance name
-          type: string
-          description: Must match an Argo CD instance configured in RHDH
-          default: default
-        argoNS:
-          title: Argo CD namespace
-          type: string
-          description: Namespace where Argo CD Application CRs are created
-          default: tssc-gitops
-        argoProject:
-          title: Argo CD project
-          type: string
-          description: Argo CD project for the Application
-          default: default
-
   steps:
     - id: fetch-provision-data
       name: Fetch Provision Data
@@ -95,9 +73,9 @@ spec:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
           owner: ${{ user.ref if user.ref else "user:guest" }}
-          argoInstance: ${{ parameters.argoInstance }}
-          argoNS: ${{ parameters.argoNS }}
-          argoProject: ${{ parameters.argoProject }}
+          argoInstance: default
+          argoNS: tssc-gitops
+          argoProject: default
           defaultBranch: main
           cluster: ${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}
           gitlabHost: gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}
@@ -125,8 +103,8 @@ spec:
       action: argocd:create-resources
       input:
         appName: ${{ parameters.name }}-app-of-apps
-        argoInstance: ${{ parameters.argoInstance }}
-        namespace: ${{ parameters.argoNS }}
+        argoInstance: default
+        namespace: tssc-gitops
         repoUrl: https://gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}/${{ parameters.repoOwner }}/${{ parameters.name }}.git
         path: ./app-of-apps
         labelValue: ${{ parameters.name }}
