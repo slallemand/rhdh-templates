@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: demo-landing
-  title: Deploy Demo Landing (Helm + GitOps)
+  title: Deploy Demo Landing
   description: >
     Create a GitLab repository with a visual landing-page Helm chart and Argo CD
     Application manifests, then bootstrap GitOps on OpenShift. No CI build required.
