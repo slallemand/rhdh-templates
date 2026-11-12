@@ -75,13 +75,13 @@ The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-a
 
 The generated `catalog-info.yaml` enables:
 
-- **CD** tab (Argo CD): `argocd/app-selector`, `argocd/instance-name`, `argocd/app-namespace`
+- **CD** tab (Argo CD): `argocd/app-selector: tssc/gitops=<name>` (same as TSSC apps such as laposte-api), plus `argocd/instance-name` / `argocd/app-namespace`
 - **Topology / Kubernetes**: `backstage.io/kubernetes-id`
 - **Source link**: `backstage.io/source-location`
 
-CI is intentionally **not** enabled: no `janus-idp.io/tekton` and no `gitlab.com/project-slug` (that annotation would open the GitLab pipelines CI tab).
+CI is intentionally **not** enabled: no `janus-idp.io/tekton` and no `gitlab.com/project-slug`.
 
-Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`) are set on the Helm workloads and GitOps manifests.
+Argo Applications are labeled `tssc/gitops: <name>` so the CD selector matches.
 
 ### Runtime prerequisites
 

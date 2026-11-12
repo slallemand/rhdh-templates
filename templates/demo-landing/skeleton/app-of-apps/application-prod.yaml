@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   labels:
-    demo/gitops: ${{ values.name }}
+    tssc/gitops: ${{ values.name }}
     backstage-name: ${{ values.name }}
     backstage.io/kubernetes-id: ${{ values.name }}
 spec:

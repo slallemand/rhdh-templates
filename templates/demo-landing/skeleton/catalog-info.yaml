@@ -5,16 +5,16 @@ metadata:
   title: ${{ values.name }}
   description: ${{ values.description }}
   annotations:
-    # CD (Argo CD) — enables the CD tab; do not add janus-idp.io/tekton (CI)
-    argocd/app-selector: demo/gitops=${{ values.name }}
+    # CD — same selector as TSSC workshop apps (e.g. laposte-api)
+    argocd/app-selector: tssc/gitops=${{ values.name }}
     argocd/instance-name: ${{ values.argoInstance }}
     argocd/app-namespace: ${{ values.argoNS }}
-    # Topology / Kubernetes
+    # Topology
     backstage.io/kubernetes-id: ${{ values.name }}
-    # Source link only (no gitlab.com/project-slug — that enables the GitLab CI tab)
+    # Source (no gitlab.com/project-slug / janus-idp.io/tekton → no CI tab)
     backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
   labels:
-    demo/gitops: ${{ values.name }}
+    tssc/gitops: ${{ values.name }}
   tags:
     - demo
     - helm
