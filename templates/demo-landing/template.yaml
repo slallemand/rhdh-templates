@@ -4,8 +4,8 @@ metadata:
   name: demo-landing
   title: Deploy Demo Landing (Helm + GitOps)
   description: >
-    Create a GitLab repository with a visual landing-page Helm chart and deploy
-    it to OpenShift via OpenShift GitOps (Argo CD). No CI build required.
+    Create a GitLab repository with a visual landing-page Helm chart and Argo CD
+    Application manifests, then bootstrap GitOps on OpenShift. No CI build required.
   tags:
     - recommended
     - demo
@@ -59,6 +59,8 @@ spec:
       required:
         - namespace
         - argoInstance
+        - argoNS
+        - argoProject
       properties:
         namespace:
           title: Target namespace
@@ -70,6 +72,16 @@ spec:
           type: string
           description: Must match an Argo CD instance configured in RHDH
           default: default
+        argoNS:
+          title: Argo CD namespace
+          type: string
+          description: Namespace where Argo CD Application CRs are created
+          default: tssc-gitops
+        argoProject:
+          title: Argo CD project
+          type: string
+          description: Argo CD project for the Application
+          default: default
 
   steps:
     - id: fetch-provision-data
@@ -79,7 +91,7 @@ spec:
         entityRef: component:default/provisioning-data
 
     - id: fetch
-      name: Render Helm chart and catalog metadata
+      name: Render Helm chart, catalog metadata, and GitOps manifests
       action: fetch:template
       input:
         url: ./skeleton
@@ -91,10 +103,14 @@ spec:
           owner: user:default/${{ user.entity.metadata.name }}
           namespace: ${{ parameters.namespace }}
           argoInstance: ${{ parameters.argoInstance }}
+          argoNS: ${{ parameters.argoNS }}
+          argoProject: ${{ parameters.argoProject }}
+          defaultBranch: main
           cluster: ${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}
           gitlabHost: gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}
           destination: ${{ parameters.repoOwner }}/${{ parameters.name }}
           gitlabGroup: ${{ parameters.repoOwner }}
+          repoURL: https://gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}/${{ parameters.repoOwner }}/${{ parameters.name }}
 
     - id: publish
       name: Publish repository to GitLab
@@ -112,14 +128,14 @@ spec:
         catalogInfoPath: /catalog-info.yaml
 
     - id: argocd
-      name: Create Argo CD Application
+      name: Bootstrap Argo CD app-of-apps
       action: argocd:create-resources
       input:
-        appName: ${{ parameters.name }}
+        appName: ${{ parameters.name }}-app-of-apps
         argoInstance: ${{ parameters.argoInstance }}
-        namespace: ${{ parameters.namespace }}
+        namespace: ${{ parameters.argoNS }}
         repoUrl: https://gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}/${{ parameters.repoOwner }}/${{ parameters.name }}.git
-        path: chart
+        path: ./app-of-apps
         labelValue: ${{ parameters.name }}
 
   output:

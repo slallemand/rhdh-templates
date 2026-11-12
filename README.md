@@ -33,12 +33,22 @@ When you add a new template under `templates/<name>/template.yaml`, also append 
 **Flow**
 
 1. Fetches `component:default/provisioning-data` to resolve the demo cluster domain
-2. Renders a Helm chart + `catalog-info.yaml`
-3. Creates a repository on the self-hosted GitLab (`gitlab-gitlab.<ocp-apps-domain>`)
+2. Renders **one** GitLab repo content: Helm chart + Argo CD Application manifests + `catalog-info.yaml`
+3. Publishes the repository to self-hosted GitLab (`gitlab-gitlab.<ocp-apps-domain>`)
 4. Registers the component in the RHDH catalog
-5. Creates an Argo CD Application via `argocd:create-resources`
+5. Bootstraps an Argo CD **app-of-apps** that syncs `./app-of-apps` from that same repo
 
 There is **no CI build**: the chart serves static HTML from a ConfigMap using `nginxinc/nginx-unprivileged`.
+
+### What lands in the GitLab repo
+
+| Path | Role |
+|------|------|
+| `chart/` | Helm chart deployed to OpenShift |
+| `app-of-apps/` | Argo CD `Application` YAML (visible GitOps) |
+| `catalog-info.yaml` | RHDH catalog entity |
+
+The scaffolder action only creates `${name}-app-of-apps`. That app syncs `app-of-apps/`, which in turn creates the Helm `Application` that deploys `chart/`.
 
 ### Default parameters
 
@@ -49,6 +59,8 @@ There is **no CI build**: the chart serves static HTML from a ConfigMap using `n
 | `repoVisibility` | `public` | GitLab project visibility |
 | `namespace` | `demo-landing` | OpenShift target namespace |
 | `argoInstance` | `default` | Must match RHDH Argo CD config |
+| `argoNS` | `tssc-gitops` | Namespace for Argo Application CRs |
+| `argoProject` | `default` | Argo CD project |
 
 The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-apps-domain}` from `provisioning-data`.
 
@@ -56,11 +68,11 @@ The GitLab host is **not** a form field: it is derived as `gitlab-gitlab.${ocp-a
 
 The generated `catalog-info.yaml` enables:
 
-- **Argo CD** tab: `argocd/app-name`, `argocd/instance-name`
+- **Argo CD** tab: `argocd/app-name` (child Helm Application), `argocd/instance-name`
 - **Topology / Kubernetes** tabs: `backstage.io/kubernetes-id`, `backstage.io/kubernetes-namespace`
 - **Source link**: `backstage.io/source-location`, `gitlab.com/project-slug`
 
-Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`) are set on the Helm workloads.
+Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`) are set on the Helm workloads and GitOps manifests.
 
 ### Runtime prerequisites
 
@@ -68,7 +80,7 @@ Matching labels (`backstage.io/kubernetes-id`, `app.openshift.io/runtime: nginx`
 - RHDH with dynamic plugins: GitLab scaffolder, Argo CD (frontend + `argocd:create-resources`), Kubernetes, Topology
 - GitLab integration for host `gitlab-gitlab.<ocp-apps-domain>` (token with permission to create projects in the target group)
 - Argo CD / OpenShift GitOps configured in RHDH (`argoInstance` must exist)
-- Target OpenShift namespace available (or allow Argo CD to create it)
+- Target OpenShift namespace available (or allow Argo CD to create it via `CreateNamespace=true`)
 
 ### Local chart check
 

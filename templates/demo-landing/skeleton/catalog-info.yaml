@@ -11,6 +11,8 @@ metadata:
     backstage.io/kubernetes-namespace: ${{ values.namespace }}
     backstage.io/source-location: url:https://${{ values.gitlabHost }}/${{ values.destination }}
     gitlab.com/project-slug: ${{ values.destination }}
+  labels:
+    demo/gitops: ${{ values.name }}
   tags:
     - demo
     - helm
