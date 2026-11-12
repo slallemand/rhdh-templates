@@ -14,7 +14,7 @@ metadata:
     - gitlab
     - openshift
 spec:
-  owner: rhdh-demos
+  owner: user:guest
   type: website
 
   parameters:
