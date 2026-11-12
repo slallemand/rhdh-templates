@@ -94,7 +94,7 @@ spec:
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
-          owner: user:default/${{ user.entity.metadata.name }}
+          owner: ${{ user.ref if user.ref else "user:guest" }}
           argoInstance: ${{ parameters.argoInstance }}
           argoNS: ${{ parameters.argoNS }}
           argoProject: ${{ parameters.argoProject }}
