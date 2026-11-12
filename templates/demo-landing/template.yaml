@@ -14,7 +14,7 @@ metadata:
     - gitlab
     - openshift
 spec:
-  owner: user:guest
+  owner: tssc
   type: service
 
   parameters:
@@ -103,8 +103,8 @@ spec:
       action: argocd:create-resources
       input:
         appName: ${{ parameters.name }}-app-of-apps
-        argoInstance: default
-        namespace: tssc-gitops
+        argoInstance: ${{ parameters.argoInstance }}
+        namespace: ${{ parameters.argoNS }}
         repoUrl: https://gitlab-gitlab.${{ steps['fetch-provision-data'].output.entity.metadata.labels['ocp-apps-domain'] }}/${{ parameters.repoOwner }}/${{ parameters.name }}.git
         path: ./app-of-apps
         labelValue: ${{ parameters.name }}
